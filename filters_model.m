@@ -13,6 +13,8 @@ options = bodeoptions;
 options.FreqUnits = 'Hz'; % or 'rad/second', 'rpm', etc.
 bode(H, options)
 
+
+
 %% Second-order lowpass butterworth filter
 
 %use the online data sheet
