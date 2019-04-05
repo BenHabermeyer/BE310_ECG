@@ -12,7 +12,7 @@ s = tf('s');
 H = R*s*C / (R*s*C + 1)
 options = bodeoptions;
 options.FreqUnits = 'Hz'; % or 'rad/second', 'rpm', etc.
-[mag, phase, wout] = bode(H, options);
+[mag, phase, wout] = bode(H, {4*2*pi, 1001*2*pi}, options);
 
 raw = xlsread("Lab3_HP_Data.xlsx", 1);
 freq = raw(:,1);
@@ -20,23 +20,26 @@ Vin = raw(:,2);
 Vout = raw(:,3);
 delT = raw(:,4);
 
+close all
 figure
-semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)))
+subplot(2,1,1)
+semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)), "LineWidth", 1.4)
 hold on
-semilogx(freq, 20*log10(Vout./Vin), 'o')
-xlabel("Frequency (Hz)")
+semilogx(freq, 20*log10(Vout./Vin), '.', "MarkerSize", 20)
 ylabel("Magnitude (dB)")
-title("Passive Highpass Filter - Magnitude")
-legend("Model", "Experimental Circuit", "Location", "northwest")
-
-figure
-semilogx(squeeze(wout/(2*pi)), squeeze(phase))
+set(gca, "FontSize", 20)
+legend("Passive highpass filter model", "Experimental data", "Location", "southeast")
+hold off
+subplot(2,1,2)
+semilogx(squeeze(wout/(2*pi)), squeeze(phase), "LineWidth", 1.4)
 hold on
-semilogx(freq, 360*freq.*delT/1000, 'o')
+semilogx(freq, 360*freq.*delT/1000, '.', "MarkerSize", 20)
 xlabel("Frequency (Hz)")
 ylabel("Phase (degrees)")
-title("Passive Highpass Filter - Phase")
-legend("Model", "Experimental Circuit", "Location", "northwest")
+legend("Passive highpass filter model", "Experimental data", "Location", "northeast")
+hold off
+set(gca, "FontSize", 20)
+set(gcf,'Position',[0 0 775 775])
 
 %% Second-order lowpass butterworth filter
 
@@ -66,7 +69,7 @@ Q = (1 + R4/RQ) * (1 / ((1/R1)+(1/R2)+(1/RG))) * sqrt((RF1*C1 / (R1*R2*RF2*C2)))
 H = (Alp * Wn2) / (s^2 + s*sqrt(Wn2)/Q + Wn2)
 options = bodeoptions;
 options.FreqUnits = 'Hz'; % or 'rad/second', 'rpm', etc.
-[mag, phase, wout] = bode(H, options);
+[mag, phase, wout] = bode(H, {4*2*pi, 1001*2*pi}, options);
 
 raw = xlsread("Lab3_HP_Data.xlsx", 2);
 freq = raw(:,1);
@@ -74,6 +77,28 @@ Vin = raw(:,2);
 Vout = raw(:,3);
 delT = raw(:,4);
 
+close all
+figure
+subplot(2,1,1)
+semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)), "LineWidth", 1.4)
+hold on
+semilogx(freq, 20*log10(Vout./Vin), '.', "MarkerSize", 20)
+ylabel("Magnitude (dB)")
+set(gca, "FontSize", 20)
+legend("Active lowpass filter model", "Experimental data", "Location", "southwest")
+hold off
+subplot(2,1,2)
+semilogx(squeeze(wout/(2*pi)), squeeze(phase), "LineWidth", 1.4)
+hold on
+semilogx(freq, -360*freq.*delT/1000, '.', "MarkerSize", 20)
+xlabel("Frequency (Hz)")
+ylabel("Phase (degrees)")
+legend("Active lowpass filter model", "Experimental data", "Location", "southwest")
+hold off
+set(gca, "FontSize", 20)
+set(gcf,'Position',[0 0 775 775])
+
+%{
 figure
 semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)))
 hold on
@@ -91,6 +116,7 @@ xlabel("Frequency (Hz)")
 ylabel("Phase (degrees)")
 title("Active Lowpass Filter - Phase")
 legend("Model", "Experimental Circuit", "Location", "northwest")
+%}
 
 %% Second-order highpass butterworth filter
 
@@ -120,7 +146,7 @@ Q = (1 + R4/RQ) * (1 / ((1/R1)+(1/R2)+(1/RG))) * sqrt((RF1*C1 / (R1*R2*RF2*C2)))
 H = (Ahp * s^2) / (s^2 + s*sqrt(Wn2)/Q + Wn2)
 options = bodeoptions;
 options.FreqUnits = 'Hz'; % or 'rad/second', 'rpm', etc.
-[mag, phase, wout] = bode(H, options);
+[mag, phase, wout] = bode(H, {4*2*pi, 1001*2*pi}, options);
 
 raw = xlsread("Lab3_HP_Data.xlsx", 3);
 freq = raw(:,1);
@@ -128,6 +154,28 @@ Vin = raw(:,2);
 Vout = raw(:,3);
 delT = raw(:,4);
 
+close all
+figure
+subplot(2,1,1)
+semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)), "LineWidth", 1.4)
+hold on
+semilogx(freq, 20*log10(Vout./Vin), '.', "MarkerSize", 20)
+ylabel("Magnitude (dB)")
+set(gca, "FontSize", 20)
+legend("Active highpass filter model", "Experimental data", "Location", "southeast")
+hold off
+subplot(2,1,2)
+semilogx(squeeze(wout/(2*pi)), squeeze(phase), "LineWidth", 1.4)
+hold on
+semilogx(freq, 360*freq.*delT/1000, '.', "MarkerSize", 20)
+xlabel("Frequency (Hz)")
+ylabel("Phase (degrees)")
+legend("Active highpass filter model", "Experimental data", "Location", "northeast")
+hold off
+set(gca, "FontSize", 20)
+set(gcf,'Position',[0 0 775 775])
+
+%{
 figure
 semilogx(squeeze(wout/(2*pi)), squeeze(20*log10(mag)))
 hold on
@@ -145,4 +193,5 @@ xlabel("Frequency (Hz)")
 ylabel("Phase (degrees)")
 title("Active Highpass Filter - Phase")
 legend("Model", "Experimental Circuit", "Location", "northwest")
+%}
 
