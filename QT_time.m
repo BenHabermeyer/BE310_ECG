@@ -44,7 +44,7 @@ plot(lead3)
 locsQ(86) = [];
 locsQ(end) = [];
 
-peakwidths = locsT + ceil(wT/2) - locsQ;
+peakwidths = locsT + wT - locsQ;
 %convert to milliseconds - we sampled at 500Hz which is 2ms per sample
 peakms = peakwidths * 2;
 histogram(peakms)
@@ -91,7 +91,7 @@ plot(lead3)
     'MinPeakWidth', 5, 'MinPeakDistance', 200, 'Annotate', 'peaks', ...
     'Annotate', 'extent');
 
-peakwidths = locsT + ceil(wT/2) - locsQ;
+peakwidths = locsT + wT - locsQ;
 %convert to milliseconds - we sampled at 500Hz which is 2ms per sample
 peakms = peakwidths * 2;
 histogram(peakms)
@@ -159,7 +159,7 @@ locsQ(334:end) = [];
 %pad with zeros
 locsQ(length(locsQ) + 1 : length(locsT)) = 0;
 
-peakwidths = locsT + ceil(wT/2) - locsQ;
+peakwidths = locsT + wT - locsQ;
 %convert to milliseconds - we sampled at 500Hz which is 2ms per sample
 peakms = peakwidths * 2;
 
@@ -187,12 +187,6 @@ lead1 = data(:,1) - lead1_s;
 lead2 = data(:,2) - lead2_s;
 lead3 = data(:,3) - lead3_s;
 
-figure
-plot(lead1)
-figure
-plot(lead2)
-figure
-plot(lead3)
 
 %fnid the T wave peaks - set just take the width at half height from
 %lead 1
@@ -207,15 +201,48 @@ plot(lead3)
     'MinPeakWidth', 5, 'MinPeakDistance', 275, 'Annotate', 'peaks', ...
     'Annotate', 'extent');
 
+close all 
+figure
+subplot(2,1,1)
+findpeaks(lead1, 'MinPeakHeight', 0.2,  ...
+    'MinPeakWidth', 15, 'MinPeakProminence', 0.1,...
+    'MinPeakDistance', 300, 'WidthReference', 'halfheight',...
+    'Annotate', 'peaks', 'Annotate', 'extent');
+ylabel("Voltage (mV)")
+legend("Lead1", "T-wave", "height", "width (half-height)", "Location",...
+    "northeast")
+xlim([600, 1000])
+xticklabels({})
+set(gca, "FontSize", 16)
+subplot(2,1,2)
+findpeaks(-1*lead3, 'MinPeakHeight', 0.06, ...
+    'MinPeakProminence', 0.25, ...
+    'MinPeakWidth', 5, 'MinPeakDistance', 275, 'Annotate', 'peaks');
+legend("Lead3 (inverted)", "Q-wave", "Location", "southeast")
+ylabel("Voltage (mV)")
+xlim([600, 1000])
+xticklabels({"0", "", "200", "", "400", "", "600", "", "800"})
+set(gca, "FontSize", 16)
+xlabel("Time (ms)")
+
 locsQ(end) = [];
 
 locsQ(length(locsQ) + 1 : length(locsT)) = 0;
 
-peakwidths = locsT + ceil(wT/2) - locsQ;
+peakwidths = locsT + wT - locsQ;
 %convert to milliseconds - we sampled at 500Hz which is 2ms per sample
 peakms = peakwidths * 2;
 
+%{
 histogram(peakms)
 %find the mean and standard deviation
 meanpeak = mean(peakms)
 sdpeak = std(peakms)
+
+%Plot instantaneous QT time vs. time
+figure
+plot(locsQ/500, peakms, 'o')
+xlabel("Time (s)")
+ylabel("Q-T interval time (ms)")
+set(gca, "FontSize", 16)
+%}
